@@ -3,8 +3,12 @@
 # new Env("baihu尝试修复异常")
 
 dir_shell=$QL_DIR/shell
-. $dir_shell/share.sh
-. /root/.bashrc
+if [ -f "$dir_shell/share.sh" ]; then
+    . "$dir_shell/share.sh"
+fi
+if [ -f "/root/.bashrc" ]; then
+    . /root/.bashrc
+fi
 
 bili_repo="raywangqvq_bilibilitoolpro"
 bili_branch=""

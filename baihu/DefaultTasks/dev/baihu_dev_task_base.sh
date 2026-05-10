@@ -78,8 +78,12 @@ if [ ! -d "$dir_repo" ] && [ -d "$QL_DIR/scripts" ]; then
   dir_repo="$QL_DIR/scripts"
 fi
 dir_shell=$QL_DIR/shell
-touch $dir_shell/env.sh && . $dir_shell/env.sh
-touch /root/.bashrc && . /root/.bashrc
+if [ -d "$dir_shell" ]; then
+    touch "$dir_shell/env.sh" && . "$dir_shell/env.sh"
+fi
+if [ -f "/root/.bashrc" ]; then
+    . /root/.bashrc
+fi
 
 # 目录
 say "白虎repo目录: $dir_repo"
