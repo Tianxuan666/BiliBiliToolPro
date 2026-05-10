@@ -104,6 +104,10 @@ public static class ServiceCollectionExtension
 
         // baihu
         var baihuHost = configuration["BH_URL"] ?? "http://localhost:8052";
+        if (!baihuHost.EndsWith("/"))
+        {
+            baihuHost += "/";
+        }
         services
             .AddHttpApi<IBaiHuApi>(o =>
             {
