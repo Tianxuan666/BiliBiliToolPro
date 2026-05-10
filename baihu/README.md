@@ -17,18 +17,20 @@
 ```text
 名称：Bilibili
 类型：公开仓库
-链接：https://github.com/RayWangQvQ/BiliBiliToolPro.git
+链接：https://github.com/tianxuan666/BiliBiliToolPro.git
 定时类型：crontab
 定时规则：2 2 28 * *
-白名单：baihu_task_.+\.sh
-文件后缀：sh
+白名单：
+黑名单: qinglong/|/dev
+依赖文件: .cs|.ts|.json|.go|.bru
+文件后缀：
 ```
 
 #### 1.2.2. 方式二：定时任务拉库
 
 ```text
 名称：拉取Bili库
-命令：bh repo https://github.com/RayWangQvQ/BiliBiliToolPro.git "baihu_task_"
+命令：bh repo https://github.com/tianxuan666/BiliBiliToolPro.git "baihu_task_"
 定时规则：2 2 28 * *
 ```
 
@@ -43,7 +45,7 @@
 请在白虎环境变量中添加：
 
 - `BH_bilibili`：白虎 OpenAPI token
-- `BH_URL`：白虎 OpenAPI 地址（可选，默认 `http://localhost:8052`）
+- `BH_URL`：白虎 OpenAPI 地址（可选，默认 `http://localhost:8052/path`）
 
 运行脚本时会自动注入：
 
