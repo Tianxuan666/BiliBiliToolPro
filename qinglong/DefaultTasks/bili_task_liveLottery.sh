@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 0 13 * * *
 # new Env("bili天选时刻")
 

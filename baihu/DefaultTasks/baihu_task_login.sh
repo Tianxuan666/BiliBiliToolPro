@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 0 0 1 1 *
 # new Env("baihu扫码登录")
 

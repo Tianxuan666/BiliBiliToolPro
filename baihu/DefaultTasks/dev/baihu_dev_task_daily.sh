@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 5 9 * * *
 # new Env("baihu每日任务[dev先行版]")
 

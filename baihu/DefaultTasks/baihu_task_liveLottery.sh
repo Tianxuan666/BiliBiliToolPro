@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 0 13 * * *
 # new Env("baihu天选时刻")
 

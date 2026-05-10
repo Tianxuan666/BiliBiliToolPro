@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 0 8 * * *
 # new Env("baihu测试ck")
 

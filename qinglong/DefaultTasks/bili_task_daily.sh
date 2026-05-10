@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 0 9 * * *
 # new Env("bili每日任务")
 

@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 7 1 * * *
 # new Env("baihu大会员大积分[dev先行版]")
 

@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 0 12 * * *
 # new Env("baihu免费B币券充电任务")
 

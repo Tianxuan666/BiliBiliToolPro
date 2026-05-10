@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 0 15 * * *
 # new Env("bili领取大会员漫画权益任务")
 

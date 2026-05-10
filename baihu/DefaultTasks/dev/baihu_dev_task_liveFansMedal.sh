@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 5 0 * * *
 # new Env("baihu直播粉丝牌[dev先行版]")
 

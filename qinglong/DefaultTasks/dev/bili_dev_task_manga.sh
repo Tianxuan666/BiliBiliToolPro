@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 0 14 * * *
 # new Env("bili漫画任务[dev先行版]")
 

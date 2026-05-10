@@ -1,4 +1,4 @@
-﻿# !/usr/bin/env bash
+# !/usr/bin/env bash
 # cron 0 12 1 * *
 # new Env("bili批量取关主播")
 
