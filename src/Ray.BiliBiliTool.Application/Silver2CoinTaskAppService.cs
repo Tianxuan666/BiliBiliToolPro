@@ -89,8 +89,8 @@ public class Silver2CoinTaskAppService(
         var platformType = configuration.GetSection("PlatformType").Get<PlatformType>();
         logger.LogInformation("当前运行平台：{platform}", platformType);
 
-        //更新cookie到青龙env
-        if (platformType == PlatformType.QingLong)
+        //更新cookie到面板env（青龙/白虎）
+        if (platformType == PlatformType.QingLong || platformType == PlatformType.BaiHu)
         {
             await loginDomainService.SaveCookieToQinLongAsync(ckInfo, cancellationToken);
             return;

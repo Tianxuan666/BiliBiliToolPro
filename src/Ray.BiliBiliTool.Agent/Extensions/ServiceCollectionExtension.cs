@@ -7,6 +7,7 @@ using Polly.Extensions.Http;
 using Ray.BiliBiliTool.Agent.BiliBiliAgent;
 using Ray.BiliBiliTool.Agent.BiliBiliAgent.Interfaces;
 using Ray.BiliBiliTool.Agent.BiliBiliAgent.Services;
+using Ray.BiliBiliTool.Agent.BaiHu;
 using Ray.BiliBiliTool.Agent.HttpClientDelegatingHandlers;
 using Ray.BiliBiliTool.Agent.QingLong;
 using Ray.BiliBiliTool.Config.Options;
@@ -86,6 +87,27 @@ public static class ServiceCollectionExtension
             .AddHttpApi<IQingLongApi>(o =>
             {
                 o.HttpHost = new Uri(qinglongHost);
+                o.UseDefaultUserAgent = false;
+            })
+            .ConfigureHttpClient(
+                (sp, c) =>
+                {
+                    c.DefaultRequestHeaders.Add(
+                        "User-Agent",
+                        sp.GetRequiredService<
+                            IOptionsMonitor<SecurityOptions>
+                        >().CurrentValue.UserAgent
+                    );
+                }
+            )
+            .AddPolicyHandler(GetRetryPolicy());
+
+        // baihu
+        var baihuHost = configuration["BH_URL"] ?? "http://localhost:8052";
+        services
+            .AddHttpApi<IBaiHuApi>(o =>
+            {
+                o.HttpHost = new Uri(baihuHost);
                 o.UseDefaultUserAgent = false;
             })
             .ConfigureHttpClient(

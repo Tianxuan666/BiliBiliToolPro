@@ -40,7 +40,8 @@ public static class ServiceCollectionExtension
             .Configure<LiveFansMedalTaskOptions>(
                 configuration.GetSection("LiveFansMedalTaskConfig")
             )
-            .Configure<QingLongOptions>(configuration.GetSection("QingLongConfig"));
+            .Configure<QingLongOptions>(configuration.GetSection("QingLongConfig"))
+            .Configure<BaiHuOptions>(configuration.GetSection("BaiHuConfig"));
 
         return services;
     }

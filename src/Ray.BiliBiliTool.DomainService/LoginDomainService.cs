@@ -6,6 +6,8 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using QRCoder;
 using Ray.BiliBiliTool.Agent;
+using Ray.BiliBiliTool.Agent.BaiHu;
+using Ray.BiliBiliTool.Agent.BaiHu.Dtos;
 using Ray.BiliBiliTool.Agent.BiliBiliAgent.Dtos;
 using Ray.BiliBiliTool.Agent.BiliBiliAgent.Dtos.Passport;
 using Ray.BiliBiliTool.Agent.BiliBiliAgent.Interfaces;
@@ -14,6 +16,7 @@ using Ray.BiliBiliTool.Agent.QingLong.Dtos;
 using Ray.BiliBiliTool.Config.Options;
 using Ray.BiliBiliTool.DomainService.Interfaces;
 using Ray.BiliBiliTool.Infrastructure.Cookie;
+using Ray.BiliBiliTool.Infrastructure.Enums;
 
 namespace Ray.BiliBiliTool.DomainService;
 
@@ -25,9 +28,11 @@ public class LoginDomainService(
     IPassportApi passportApi,
     IHostEnvironment hostingEnvironment,
     IQingLongApi qingLongApi,
+    IBaiHuApi baiHuApi,
     IHomeApi homeApi,
     IConfiguration configuration,
-    IOptions<QingLongOptions> qingLongOptions
+    IOptions<QingLongOptions> qingLongOptions,
+    IOptions<BaiHuOptions> baiHuOptions
 ) : ILoginDomainService
 {
     public async Task<BiliCookie> LoginByQrCodeAsync(CancellationToken cancellationToken)
@@ -232,6 +237,21 @@ public class LoginDomainService(
         CancellationToken cancellationToken
     )
     {
+        var platformType = configuration.GetSection("PlatformType").Get<PlatformType>();
+
+        if (platformType == PlatformType.BaiHu)
+        {
+            return await SaveCookieToBaiHuAsync(ckInfo, cancellationToken);
+        }
+
+        return await SaveCookieToQingLongAsync(ckInfo, cancellationToken);
+    }
+
+    private async Task<bool> SaveCookieToQingLongAsync(
+        BiliCookie ckInfo,
+        CancellationToken cancellationToken
+    )
+    {
         try
         {
             var token = await GetQingLongAuthTokenAsync();
@@ -302,7 +322,85 @@ public class LoginDomainService(
         }
         catch
         {
-            await PrintIfSaveCookieFailAsync(ckInfo, cancellationToken);
+            await PrintIfSaveQingLongCookieFailAsync(ckInfo, cancellationToken);
+            return false;
+        }
+    }
+
+    private async Task<bool> SaveCookieToBaiHuAsync(
+        BiliCookie ckInfo,
+        CancellationToken cancellationToken
+    )
+    {
+        try
+        {
+            var token = await GetBaiHuAuthTokenAsync();
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new Exception("获取白虎token失败");
+            }
+
+            var bhEnvList = await baiHuApi.GetEnvsAsync(token);
+            if (bhEnvList.code != 200)
+            {
+                throw new Exception($"查询环境变量失败：{bhEnvList.ToJsonStr()}");
+            }
+
+            logger.LogDebug(bhEnvList.data.ToJsonStr());
+            logger.LogDebug(ckInfo.ToString());
+
+            var list = bhEnvList
+                .data.Where(x => x.name.StartsWith("Ray_BiliBiliCookies__"))
+                .ToList();
+            var oldEnv = list.FirstOrDefault(x => x.value.Contains(ckInfo.UserId));
+
+            if (oldEnv != null)
+            {
+                logger.LogInformation("用户已存在，更新cookie");
+                logger.LogInformation("Key：{key}", oldEnv.name);
+                var update = new UpdateBaiHuEnv
+                {
+                    name = oldEnv.name,
+                    value = ckInfo.CookieStr,
+                    remark = string.IsNullOrEmpty(oldEnv.remark)
+                        ? $"bili-{ckInfo.UserId}"
+                        : oldEnv.remark,
+                };
+
+                var updateRe = await baiHuApi.UpdateEnvAsync(oldEnv.id, update, token);
+                logger.LogInformation(updateRe.code == 200 ? "更新成功！" : updateRe.ToJsonStr());
+                return true;
+            }
+
+            logger.LogInformation("用户不存在，新增cookie");
+            var maxNum = -1;
+            if (list.Any())
+            {
+                maxNum = list.Select(x =>
+                    {
+                        var num = x.name.Replace("Ray_BiliBiliCookies__", "");
+                        var parseSuc = int.TryParse(num, out int envNum);
+                        return parseSuc ? envNum : 0;
+                    })
+                    .Max();
+            }
+
+            var name = $"Ray_BiliBiliCookies__{maxNum + 1}";
+            logger.LogInformation("Key：{key}", name);
+
+            var add = new AddBaiHuEnv
+            {
+                name = name,
+                value = ckInfo.CookieStr,
+                remark = $"bili-{ckInfo.UserId}",
+            };
+            var addRe = await baiHuApi.AddEnvAsync(add, token);
+            logger.LogInformation(addRe.code == 200 ? "新增成功！" : addRe.ToJsonStr());
+            return true;
+        }
+        catch
+        {
+            await PrintIfSaveBaiHuCookieFailAsync(ckInfo, cancellationToken);
             return false;
         }
     }
@@ -428,9 +526,40 @@ public class LoginDomainService(
         return $"{token.Data.token_type} {token.Data.token}";
     }
 
-    private Task PrintIfSaveCookieFailAsync(BiliCookie ckInfo, CancellationToken cancellationToken)
+    private Task PrintIfSaveQingLongCookieFailAsync(
+        BiliCookie ckInfo,
+        CancellationToken cancellationToken
+    )
     {
         logger.LogError("持久化失败，青龙版本高于2.18，请手动添加环境变量到青龙");
+        logger.LogWarning("变量Key：{key}", "Ray_BiliBiliCookies__0");
+        logger.LogWarning("变量值：{value}", ckInfo.CookieStr);
+        logger.LogWarning(
+            "如果Key已存在，请自行+1，如Ray_BiliBiliCookies__1，Ray_BiliBiliCookies__2..."
+        );
+        return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #region baihu
+
+    private Task<string> GetBaiHuAuthTokenAsync()
+    {
+        logger.LogWarning("使用白虎OpenAPI鉴权");
+        if (string.IsNullOrWhiteSpace(baiHuOptions.Value.Token))
+        {
+            logger.LogWarning("未配置白虎token，无法自动持久化cookie");
+            logger.LogWarning("请在白虎中添加环境变量：{env}", "BH_bilibili");
+            return Task.FromResult("");
+        }
+
+        return Task.FromResult($"Bearer {baiHuOptions.Value.Token}");
+    }
+
+    private Task PrintIfSaveBaiHuCookieFailAsync(BiliCookie ckInfo, CancellationToken cancellationToken)
+    {
+        logger.LogError("持久化失败，请手动添加环境变量到白虎");
         logger.LogWarning("变量Key：{key}", "Ray_BiliBiliCookies__0");
         logger.LogWarning("变量值：{value}", ckInfo.CookieStr);
         logger.LogWarning(
