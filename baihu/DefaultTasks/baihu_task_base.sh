@@ -458,17 +458,25 @@ run_task() {
     eval $invocation
 
     local target_code=$1
+    local console_dir="$baihu_bili_repo_dir/src/Ray.BiliBiliTool.Console"
+    local console_project="$console_dir/Ray.BiliBiliTool.Console.csproj"
 
     export Ray_PlatformType=BaiHu
     export Ray_RunTasks=$target_code
     export Ray_BaiHuConfig__Token=${BH_bilibili:-""}
 
-    cd $baihu_bili_repo_dir/src/Ray.BiliBiliTool.Console
+    if [ ! -f "$console_project" ]; then
+        say_err "未找到项目文件：$console_project"
+        say_err "请确认白虎拉库是否同步了完整源码（不只是脚本文件）"
+        return 1
+    fi
+
+    cd "$console_dir"
 
     if [ "$prefer_mode" == "dotnet" ]; then
-        dotnet run --ENVIRONMENT=Production
+        dotnet run --project "$console_project" --ENVIRONMENT=Production
     else
-        cp -f $baihu_bili_repo_dir/bin/Ray.BiliBiliTool.Console .
+        cp -f "$baihu_bili_repo_dir/bin/Ray.BiliBiliTool.Console" .
         chmod +x ./Ray.BiliBiliTool.Console && ./Ray.BiliBiliTool.Console --ENVIRONMENT=Production
     fi
 }
