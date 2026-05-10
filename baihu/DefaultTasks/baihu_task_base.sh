@@ -465,17 +465,18 @@ run_task() {
     export Ray_RunTasks=$target_code
     export Ray_BaiHuConfig__Token=${BH_bilibili:-""}
 
-    if [ ! -f "$console_project" ]; then
-        say_err "未找到项目文件：$console_project"
-        say_err "请确认白虎拉库是否同步了完整源码（不只是脚本文件）"
-        return 1
-    fi
-
-    cd "$console_dir"
-
     if [ "$prefer_mode" == "dotnet" ]; then
+        if [ ! -f "$console_project" ]; then
+            say_err "未找到项目文件：$console_project"
+            say_err "当前为dotnet模式，请确认白虎拉库是否同步了完整源码"
+            say_err "或切换运行模式为bilitool（export BILI_MODE=\"bilitool\"）"
+            return 1
+        fi
+
+        cd "$console_dir"
         dotnet run --project "$console_project" --ENVIRONMENT=Production
     else
+        cd "$baihu_bili_repo_dir/bin"
         cp -f "$baihu_bili_repo_dir/bin/Ray.BiliBiliTool.Console" .
         chmod +x ./Ray.BiliBiliTool.Console && ./Ray.BiliBiliTool.Console --ENVIRONMENT=Production
     fi
