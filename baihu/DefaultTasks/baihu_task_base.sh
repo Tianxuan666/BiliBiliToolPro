@@ -11,7 +11,7 @@ set -u
 set -o pipefail
 
 verbose=false                          # 开启debug日志
-bili_repo="tianxuan666/bilibilitoolpro" # 仓库地址
+bili_repo="raywangqvq/bilibilitoolpro" # 仓库地址
 bili_branch=""                         # 分支名，空或_develop
 prefer_mode=${BILI_MODE:-"dotnet"}     # dotnet或bilitool，需要通过环境变量配置
 github_proxy=${BILI_GITHUB_PROXY:-""}  # 下载github release包时使用的代理，会拼在地址前面，需要通过环境变量配置
@@ -387,7 +387,7 @@ get_download_url() {
     eval $invocation
 
     tag=$1
-    url="${github_proxy}https://github.com/tianxuan666/BiliBiliToolPro/releases/download/$tag/bilibili-tool-pro-v$tag-$current_os-$machine_architecture.zip"
+    url="${github_proxy}https://github.com/raywangqvq/BiliBiliToolPro/releases/download/$tag/bilibili-tool-pro-v$tag-$current_os-$machine_architecture.zip"
     say "下载地址：$url"
     echo $url
     return 0
@@ -440,14 +440,14 @@ install() {
             install_dotnet || {
                 say_err "安装失败"
                 say_err "请根据文档自行在青龙容器中安装dotnet：https://learn.microsoft.com/zh-cn/dotnet/core/install/linux-$current_linux_os"
-                say_err "或者尝试切换运行模式为bilitool，它不需要安装dotnet：https://github.com/tianxuan666/BiliBiliToolPro/blob/develop/baihu/README.md"
+                say_err "或者尝试切换运行模式为bilitool，它不需要安装dotnet：https://github.com/raywangqvq/BiliBiliToolPro/blob/develop/baihu/README.md"
             }
         fi
 
         if [ "$prefer_mode" == "bilitool" ]; then
             install_bilitool || {
                 say_err "安装失败，请检查日志并重试"
-                say_err "或者尝试切换运行模式为dotnet：https://github.com/tianxuan666/BiliBiliToolPro/blob/develop/baihu/README.md"
+                say_err "或者尝试切换运行模式为dotnet：https://github.com/raywangqvq/BiliBiliToolPro/blob/develop/baihu/README.md"
             }
         fi
     fi
