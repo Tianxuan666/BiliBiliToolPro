@@ -1,8 +1,8 @@
 # !/usr/bin/env bash
 # cron 0 1 * * *
-# new Env("baihu领取大会员福利任务[dev先行版]")
+# new Env("bili领取大会员福利任务")
 
-. "$(dirname "$0")/baihu_dev_task_base.sh"
+. "$(dirname "$0")/bili_task_base.sh"
 
 target_task_code="VipPrivilege"
 run_task "${target_task_code}"

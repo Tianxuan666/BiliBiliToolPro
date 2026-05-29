@@ -1,8 +1,8 @@
 # !/usr/bin/env bash
 # cron 5 0 * * *
-# new Env("baihu直播粉丝牌")
+# new Env("bili直播粉丝牌[dev先行版]")
 
-. "$(dirname "$0")/baihu_task_base.sh"
+. "$(dirname "$0")/bili_dev_task_base.sh"
 
 target_task_code="LiveFansMedal"
 run_task "${target_task_code}"

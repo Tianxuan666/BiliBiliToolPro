@@ -1,6 +1,6 @@
 # !/usr/bin/env bash
 # cron 0 0 1 1 *
-# new Env("baihu_dev_task_base");
+# new Env("bili_dev_task_base");
 
 # Stop script on NZEC
 set -e

@@ -30,7 +30,7 @@
 
 ```text
 名称：拉取Bili库
-命令：bh repo https://github.com/tianxuan666/BiliBiliToolPro.git "baihu_task_"
+命令：bh repo https://github.com/tianxuan666/BiliBiliToolPro.git "bili_task_"
 定时规则：2 2 28 * *
 ```
 
@@ -68,7 +68,7 @@
 如果希望使用 develop 分支，可使用：
 
 ```text
-白名单：baihu_dev_task_.+\.sh
+白名单：bili_dev_task_.+\.sh
 分支：develop
 ```
 

@@ -1,6 +1,6 @@
 # !/usr/bin/env bash
 # cron 0 0 1 1 *
-# new Env("baihu_base")
+# new Env("bili_base")
 
 # Stop script on NZEC
 set -e
@@ -10,7 +10,7 @@ set -u
 # This is causing it to fail
 set -o pipefail
 
-verbose=false                          # 开启debug日志
+verbose=true                          # 开启debug日志
 bili_repo="raywangqvq/bilibilitoolpro" # 仓库地址
 bili_branch=""                         # 分支名，空或_develop
 prefer_mode=${BILI_MODE:-"dotnet"}     # dotnet或bilitool，需要通过环境变量配置
@@ -477,7 +477,10 @@ run_task() {
         dotnet run --project "$console_project" --ENVIRONMENT=Production
     else
         cd "$baihu_bili_repo_dir/bin"
-        cp -f "$baihu_bili_repo_dir/bin/Ray.BiliBiliTool.Console" .
+        if [ ! -f "./Ray.BiliBiliTool.Console" ]; then
+            say_err "找不到 Ray.BiliBiliTool.Console，请先运行安装"
+            return 1
+        fi
         chmod +x ./Ray.BiliBiliTool.Console && ./Ray.BiliBiliTool.Console --ENVIRONMENT=Production
     fi
 }

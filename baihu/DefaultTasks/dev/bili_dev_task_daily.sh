@@ -1,8 +1,8 @@
 # !/usr/bin/env bash
 # cron 5 9 * * *
-# new Env("baihu每日任务[dev先行版]")
+# new Env("bili每日任务[dev先行版]")
 
-. "$(dirname "$0")/baihu_dev_task_base.sh"
+. "$(dirname "$0")/bili_dev_task_base.sh"
 
 target_task_code="Daily"
 run_task "${target_task_code}"

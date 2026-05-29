@@ -1,8 +1,8 @@
 # !/usr/bin/env bash
 # cron 0 14 * * *
-# new Env("baihu漫画任务[dev先行版]")
+# new Env("bili漫画任务")
 
-. "$(dirname "$0")/baihu_dev_task_base.sh"
+. "$(dirname "$0")/bili_task_base.sh"
 
 target_task_code="Manga"
 run_task "${target_task_code}"

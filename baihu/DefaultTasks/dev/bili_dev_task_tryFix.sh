@@ -1,6 +1,6 @@
 # !/usr/bin/env bash
 # cron 0 0 1 1 *
-# new Env("baihu尝试修复异常[dev先行版]")
+# new Env("bili尝试修复异常[dev先行版]")
 
 dir_shell=$QL_DIR/shell
 if [ -f "$dir_shell/share.sh" ]; then
