@@ -10,7 +10,7 @@ set -u
 # This is causing it to fail
 set -o pipefail
 
-verbose=true                          # 开启debug日志
+verbose=false                          # 关闭debug日志
 bili_repo="Tianxuan666/BiliBiliToolPro" # 仓库地址
 bili_upstream="raywangqvq/BiliBiliToolPro" # GitHub API/下载用的原始仓库
 bili_branch=""                         # 分支名，空或_develop
