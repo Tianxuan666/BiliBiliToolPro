@@ -11,7 +11,8 @@ set -u
 set -o pipefail
 
 verbose=true                          # 开启debug日志
-bili_repo="raywangqvq/bilibilitoolpro" # 仓库地址
+bili_repo="Tianxuan666/BiliBiliToolPro" # 仓库地址
+bili_upstream="raywangqvq/BiliBiliToolPro" # GitHub API/下载用的原始仓库
 bili_branch=""                         # 分支名，空或_develop
 prefer_mode=${BILI_MODE:-"dotnet"}     # dotnet或bilitool，需要通过环境变量配置
 github_proxy=${BILI_GITHUB_PROXY:-""}  # 下载github release包时使用的代理，会拼在地址前面，需要通过环境变量配置
@@ -399,7 +400,7 @@ install_bilitool() {
 
     say "开始安装bilitool"
     # 获取最新的release信息
-    LATEST_RELEASE=$(curl -s https://api.github.com/repos/$bili_repo/releases/latest)
+    LATEST_RELEASE=$(curl -s https://api.github.com/repos/$bili_upstream/releases/latest)
 
     # 解析最新的tag名称
     check_jq
